@@ -1,0 +1,1 @@
+from .generate_winner_column import generate_winner_column as generate_winner_column
