@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-def extract_columns(matches: pd.DataFrame, columns: dict) -> pd.DataFrame:
+def extract_columns(matches: pd.DataFrame, selected_columns: list) -> pd.DataFrame:
 
     """
     Extract the independent columns and the ones
@@ -9,4 +9,4 @@ def extract_columns(matches: pd.DataFrame, columns: dict) -> pd.DataFrame:
     at the same time as we drop the remaining NaN values
     """
 
-    return matches[list(columns.values())[6:17]].dropna()
+    return matches[selected_columns].dropna()
