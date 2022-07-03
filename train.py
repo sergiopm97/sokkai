@@ -2,6 +2,7 @@ from download import download_database
 from extract import extract_training_data, extract_ended_matches, extract_columns
 from generate import generate_winner_column
 from process import process_features
+from train import train_winner_model
 import json
 
 
@@ -37,3 +38,5 @@ if __name__ == "__main__":
         extracted_matches_data[match_features],
         scaler,
     ) = process_features(extracted_matches_data, match_features)
+
+    train_winner_model(extracted_matches_data, match_winner_column)
