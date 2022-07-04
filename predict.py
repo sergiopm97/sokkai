@@ -38,44 +38,54 @@ if __name__ == "__main__":
 
     today_matches_download_status.stop()
 
-    console.print(
-        "[green][OK][/green] Today soccer matches download done!",
-        style="bold white",
-    )
+    if len(today_soccer_matches) > 0:
 
-    pipeline_status = Status("Processing the data along the pipeline[white]...[/white]")
+        console.print(
+            "[green][OK][/green] Today soccer matches download done!",
+            style="bold white",
+        )
 
-    pipeline_status.start()
-    time.sleep(1)
+        pipeline_status = Status(
+            "Processing the data along the pipeline[white]...[/white]"
+        )
 
-    matches_data_plus_info = extract_columns(
-        today_soccer_matches, match_columns_plus_info
-    ).reset_index(drop=True)
+        pipeline_status.start()
+        time.sleep(1)
 
-    matches_info_data = matches_data_plus_info.drop(columns=match_features)
-    matches_features_data = matches_data_plus_info[match_features]
+        matches_data_plus_info = extract_columns(
+            today_soccer_matches, match_columns_plus_info
+        ).reset_index(drop=True)
 
-    processed_matches_data = process_new_data(matches_features_data)
+        matches_info_data = matches_data_plus_info.drop(columns=match_features)
+        matches_features_data = matches_data_plus_info[match_features]
 
-    pipeline_status.stop()
+        processed_matches_data = process_new_data(matches_features_data)
 
-    console.print(
-        "[green][OK][/green] Data processing along the pipeline done!",
-        style="bold white",
-    )
+        pipeline_status.stop()
 
-    predictions_status = Status(
-        "Predicting the results of today's matches[white]...[/white]"
-    )
+        console.print(
+            "[green][OK][/green] Data processing along the pipeline done!",
+            style="bold white",
+        )
 
-    predictions_status.start()
-    time.sleep(1)
+        predictions_status = Status(
+            "Predicting the results of today's matches[white]...[/white]"
+        )
 
-    generate_predictions(processed_matches_data, matches_info_data)
+        predictions_status.start()
+        time.sleep(1)
 
-    predictions_status.stop()
+        generate_predictions(processed_matches_data, matches_info_data)
 
-    console.print(
-        "[green][OK][/green] Predictions generation done!\n",
-        style="bold white",
-    )
+        predictions_status.stop()
+
+        console.print(
+            "[green][OK][/green] Predictions generation done!\n",
+            style="bold white",
+        )
+
+    else:
+        console.print(
+            "[red][ERROR][/red] No matches found for today! Try tomorrow...\n",
+            style="bold white",
+        )
