@@ -7,6 +7,7 @@ from rich.status import Status
 import json
 import os
 import time
+from datetime import date
 
 from download import download_today_matches
 from extract import extract_columns
@@ -52,8 +53,13 @@ if __name__ == "__main__":
         today_soccer_matches, match_columns_plus_info
     )
 
-    matches_info_data = matches_data_plus_info.drop(columns=match_features)
-    matches_features_data = matches_data_plus_info[match_features]
+    matches_info_data = matches_data_plus_info.drop(columns=match_features).reset_index(
+        drop=True
+    )
+
+    matches_features_data = matches_data_plus_info[match_features].reset_index(
+        drop=True
+    )
 
     scaler = load("models/winner_model/winner_scaler.pkl")
 
@@ -65,5 +71,30 @@ if __name__ == "__main__":
 
     console.print(
         "[green][OK][/green] Data processing along the pipeline done!",
+        style="bold white",
+    )
+
+    predictions_status = Status(
+        "Predicting the results of today's matches[white]...[/white]"
+    )
+
+    predictions_status.start()
+    time.sleep(1)
+
+    model = load("models/winner_model/winner_model.pkl")
+
+    predictions = pd.DataFrame(
+        model.predict_proba(processed_matches_data),
+        columns=["home_probability", "draw_away_probability"],
+    )
+
+    pd.concat([matches_info_data, predictions], axis=1).to_csv(
+        f"predictions/{str(date.today())}_predictions.csv"
+    )
+
+    predictions_status.stop()
+
+    console.print(
+        "[green][OK][/green] Predictions generation done!\n",
         style="bold white",
     )
