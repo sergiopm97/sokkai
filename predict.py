@@ -1,16 +1,15 @@
-from joblib import load
 import pyfiglet
-import pandas as pd
 from rich.console import Console
 from rich.status import Status
 
 import json
 import os
 import time
-from datetime import date
 
 from download import download_today_matches
 from extract import extract_columns
+from generate import generate_predictions
+from process import process_new_data
 
 
 if __name__ == "__main__":
@@ -51,21 +50,12 @@ if __name__ == "__main__":
 
     matches_data_plus_info = extract_columns(
         today_soccer_matches, match_columns_plus_info
-    )
+    ).reset_index(drop=True)
 
-    matches_info_data = matches_data_plus_info.drop(columns=match_features).reset_index(
-        drop=True
-    )
+    matches_info_data = matches_data_plus_info.drop(columns=match_features)
+    matches_features_data = matches_data_plus_info[match_features]
 
-    matches_features_data = matches_data_plus_info[match_features].reset_index(
-        drop=True
-    )
-
-    scaler = load("models/winner_model/winner_scaler.pkl")
-
-    processed_matches_data = pd.DataFrame(
-        scaler.transform(matches_features_data), columns=matches_features_data.columns
-    )
+    processed_matches_data = process_new_data(matches_features_data)
 
     pipeline_status.stop()
 
@@ -81,16 +71,7 @@ if __name__ == "__main__":
     predictions_status.start()
     time.sleep(1)
 
-    model = load("models/winner_model/winner_model.pkl")
-
-    predictions = pd.DataFrame(
-        model.predict_proba(processed_matches_data),
-        columns=["home_probability", "draw_away_probability"],
-    )
-
-    pd.concat([matches_info_data, predictions], axis=1).to_csv(
-        f"predictions/{str(date.today())}_predictions.csv"
-    )
+    generate_predictions(processed_matches_data, matches_info_data)
 
     predictions_status.stop()
 
