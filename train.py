@@ -96,10 +96,9 @@ if __name__ == "__main__":
     matches_data_processing_status.start()
     time.sleep(1)
 
-    (
-        extracted_matches_data[match_features],
-        scaler,
-    ) = process_features(extracted_matches_data, match_features)
+    extracted_matches_data[match_features] = process_features(
+        extracted_matches_data, match_features
+    )
 
     matches_data_processing_status.stop()
 
