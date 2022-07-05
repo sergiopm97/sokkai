@@ -10,6 +10,6 @@ def process_new_data(features: pd.DataFrame) -> pd.DataFrame:
     the scaler that was used in the training phase
     """
 
-    scaler = load("models/winner_model/winner_scaler.pkl")
+    scaler = load("models/scaler.pkl")
 
     return pd.DataFrame(scaler.transform(features), columns=features.columns)

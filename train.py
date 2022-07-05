@@ -8,9 +8,9 @@ import time
 
 from download import download_database
 from extract import extract_training_data, extract_ended_matches, extract_columns
-from generate import generate_winner_column
+from generate import generate_winner_column, generate_goals_column
 from process import process_features
-from train import train_winner_model
+from train import train_winner_model, train_goals_model
 
 
 if __name__ == "__main__":
@@ -62,9 +62,11 @@ if __name__ == "__main__":
         style="bold white",
     )
 
-    winner_column_status = Status("Generating winner column[white]...[/white]")
+    winner_goals_column_status = Status(
+        "Generating winner and goals columns[white]...[/white]"
+    )
 
-    winner_column_status.start()
+    winner_goals_column_status.start()
     time.sleep(1)
 
     extracted_matches_data["match_winner"], match_winner_column = (
@@ -78,14 +80,25 @@ if __name__ == "__main__":
         "match_winner",
     )
 
+    extracted_matches_data["match_goals"], match_goals_column = (
+        extracted_matches_data.apply(
+            lambda match: generate_goals_column(
+                match[database_columns["home_score"]],
+                match[database_columns["away_score"]],
+            ),
+            axis=1,
+        ),
+        "match_goals",
+    )
+
     extracted_matches_data = extracted_matches_data.drop(
         columns=[database_columns["home_score"], database_columns["away_score"]]
     )
 
-    winner_column_status.stop()
+    winner_goals_column_status.stop()
 
     console.print(
-        "[green][OK][/green] Winner column generation done!",
+        "[green][OK][/green] Winner and goals columns generation done!",
         style="bold white",
     )
 
@@ -107,16 +120,17 @@ if __name__ == "__main__":
         style="bold white",
     )
 
-    winner_model_training_status = Status("Training winner model[white]...[/white]")
+    models_training_status = Status("Training predictive models[white]...[/white]")
 
-    winner_model_training_status.start()
+    models_training_status.start()
     time.sleep(1)
 
-    train_winner_model(extracted_matches_data, match_winner_column)
+    train_winner_model(extracted_matches_data, match_features, match_winner_column)
+    train_goals_model(extracted_matches_data, match_features, match_goals_column)
 
-    winner_model_training_status.stop()
+    models_training_status.stop()
 
     console.print(
-        "[green][OK][/green] Winner model training done!\n",
+        "[green][OK][/green] Models training done!\n",
         style="bold white",
     )
