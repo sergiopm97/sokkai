@@ -13,13 +13,19 @@ def generate_predictions(
     processed data from today's matches
     """
 
-    model = load("models/winner_model/winner_model.pkl")
+    winner_model = load("models/winner_model/winner_model.pkl")
+    goals_model = load("models/goals_model/goals_model.pkl")
 
-    predictions = pd.DataFrame(
-        model.predict_proba(processed_features),
+    winner_predictions = pd.DataFrame(
+        winner_model.predict_proba(processed_features),
         columns=["home_probability", "draw_away_probability"],
     )
 
-    return pd.concat([matches_info, predictions], axis=1).to_csv(
-        f"predictions/{str(date.today())}_predictions.csv"
+    goals_predictions = pd.DataFrame(
+        goals_model.predict_proba(processed_features),
+        columns=["under_2.5_probability", "over_2.5_probability"],
     )
+
+    return pd.concat(
+        [matches_info, winner_predictions, goals_predictions], axis=1
+    ).to_csv(f"predictions/{str(date.today())}_predictions.csv")

@@ -13,8 +13,8 @@ def process_features(matches: pd.DataFrame, features: list) -> pd.DataFrame:
     """
 
     scaler = StandardScaler().fit(matches[features])
-    scaler_name = "winner_scaler.pkl"
+    scaler_name = "scaler.pkl"
 
-    dump(scaler, f"models/winner_model/{scaler_name}")
+    dump(scaler, f"models/{scaler_name}")
 
     return scaler.transform(matches[features])

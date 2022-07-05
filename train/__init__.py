@@ -1,1 +1,2 @@
 from .train_winner_model import train_winner_model as train_winner_model
+from .train_goals_model import train_goals_model as train_goals_model
