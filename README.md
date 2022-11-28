@@ -8,7 +8,7 @@ An AI created to predict soccer match results as accurately as possible 🤖⚽
 
 - Predict the winners of soccer games on a daily basis
 - Predict additionally if you are going to see more or less than 2.5 goals in the matches
-- Export match predictions in CSV format
+- Export match predictions in CSV format to the predictions folder
 
 ## App setup
 
